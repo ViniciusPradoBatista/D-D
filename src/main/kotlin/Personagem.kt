@@ -12,4 +12,5 @@ data class Personagem(
     fun calcularPontosDeVida() {
         pontosDeVida = 10 + ((constituicao - 10) / 2)
     }
+    
 }
