@@ -5,12 +5,21 @@ import java.util.Scanner
 
 fun main() {
     val scanner = Scanner(System.`in`)
+
     val racas = listOf(
-        Raca("Humano", mapOf("Forca" to 1, "Destreza" to 1, "Constituicao" to 1, "Inteligencia" to 1, "Sabedoria" to 1, "Carisma" to 1)),
-        Raca("Dragão", mapOf("Forca" to 2, "Constituicao" to 2)),
-        Raca("Esqueleto", mapOf("Destreza" to 2, "Constituicao" to 1)),
-        Raca("Dracomante", mapOf("Inteligencia" to 2, "Carisma" to 1)),
-        Raca("Zumbi", mapOf("Forca" to 2, "Constituicao" to 2))
+        Raca("Anão", "Anão da montanha", mapOf("Forca" to 2, "Constituicao" to 2)),
+        Raca("Anão", "Anão da colina", mapOf("Constituicao" to 2, "Sabedoria" to 1)),
+        Raca("Elfo", "Alto elfo", mapOf("Destreza" to 2, "Inteligencia" to 1)),
+        Raca("Elfo", "Elfo da floresta", mapOf("Destreza" to 2, "Sabedoria" to 1)),
+        Raca("Halfling", "Halfling pés-leves", mapOf("Destreza" to 2, "Carisma" to 1)),
+        Raca("Halfling", "Halfling robusto", mapOf("Destreza" to 2, "Constituicao" to 1)),
+        Raca("Humano", null, mapOf("Forca" to 1, "Destreza" to 1, "Constituicao" to 1, "Inteligencia" to 1, "Sabedoria" to 1, "Carisma" to 1)),
+        Raca("Draconato", null, mapOf("Forca" to 2, "Carisma" to 1)),
+        Raca("Gnomo", "Gnomo das rochas", mapOf("Inteligencia" to 2, "Constituicao" to 1)),
+        Raca("Gnomo", "Gnomo da floresta", mapOf("Inteligencia" to 2, "Destreza" to 1)),
+        Raca("Meio-elfo", null, mapOf("Carisma" to 2, "Forca" to 1, "Destreza" to 1)),
+        Raca("Meio-orc", null, mapOf("Forca" to 2, "Constituicao" to 1)),
+        Raca("Tiefling", null, mapOf("Inteligencia" to 1, "Carisma" to 2))
     )
 
     val classes = listOf(
@@ -30,7 +39,7 @@ fun main() {
         15 to 9
     )
 
-    fun distribuirPontos(personagem: Personagem, atributo: String, valorAtual: Int, pontosRestantes: Int): Int {
+    fun distribuirPontos(personagem: Personagem, atributo: String, valorAtual: Int, pontosRestantes: Int): Pair<Int, Int> {
         var pontosDisponiveis = pontosRestantes
         while (true) {
             println("Escolha o valor desejado para $atributo (valor atual: $valorAtual): ")
@@ -40,11 +49,11 @@ fun main() {
                 val custo = custosDeHabilidade[valorEscolhido] ?: 0
                 if (valorEscolhido == valorAtual) {
                     println("Você manteve o valor de $atributo em $valorAtual. Nenhum ponto foi subtraído.")
-                    return valorAtual
+                    return Pair(valorAtual, pontosDisponiveis)
                 } else if (custo <= pontosDisponiveis) {
                     pontosDisponiveis -= custo
                     println("Atributo $atributo definido para $valorEscolhido. Pontos restantes: $pontosDisponiveis")
-                    return valorEscolhido
+                    return Pair(valorEscolhido, pontosDisponiveis)
                 } else {
                     println("Pontos insuficientes. Você tem $pontosDisponiveis pontos restantes.")
                 }
@@ -57,7 +66,7 @@ fun main() {
     while (true) {
         // Escolha da raça
         println("Escolha sua raça:")
-        racas.forEachIndexed { index, raca -> println("${index + 1} - ${raca.nome}") }
+        racas.forEachIndexed { index, raca -> println("${index + 1} - ${raca.nome} ${raca.subRaca?.let { "($it)" } ?: ""}") }
         val racaEscolha = scanner.nextInt()
         val racaSelecionada = racas[racaEscolha - 1]
 
@@ -86,24 +95,41 @@ fun main() {
         if (escolhaFinal == 1) {
             // Distribuição de pontos de habilidade
             var pontosRestantes = 27
+            var repetirDistribuicao = true
 
-            personagem.forca = distribuirPontos(personagem, "Força", personagem.forca, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.forca] ?: 0
+            while (repetirDistribuicao) {
+                repetirDistribuicao = false
 
-            personagem.destreza = distribuirPontos(personagem, "Destreza", personagem.destreza, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.destreza] ?: 0
+                val (forca, pontosAposForca) = distribuirPontos(personagem, "Força", personagem.forca, pontosRestantes)
+                personagem.forca = forca
+                pontosRestantes = pontosAposForca
 
-            personagem.constituicao = distribuirPontos(personagem, "Constituicao", personagem.constituicao, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.constituicao] ?: 0
+                val (destreza, pontosAposDestreza) = distribuirPontos(personagem, "Destreza", personagem.destreza, pontosRestantes)
+                personagem.destreza = destreza
+                pontosRestantes = pontosAposDestreza
 
-            personagem.inteligencia = distribuirPontos(personagem, "Inteligencia", personagem.inteligencia, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.inteligencia] ?: 0
+                val (constituicao, pontosAposConstituicao) = distribuirPontos(personagem, "Constituicao", personagem.constituicao, pontosRestantes)
+                personagem.constituicao = constituicao
+                pontosRestantes = pontosAposConstituicao
 
-            personagem.sabedoria = distribuirPontos(personagem, "Sabedoria", personagem.sabedoria, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.sabedoria] ?: 0
+                val (inteligencia, pontosAposInteligencia) = distribuirPontos(personagem, "Inteligencia", personagem.inteligencia, pontosRestantes)
+                personagem.inteligencia = inteligencia
+                pontosRestantes = pontosAposInteligencia
 
-            personagem.carisma = distribuirPontos(personagem, "Carisma", personagem.carisma, pontosRestantes)
-            pontosRestantes -= custosDeHabilidade[personagem.carisma] ?: 0
+                val (sabedoria, pontosAposSabedoria) = distribuirPontos(personagem, "Sabedoria", personagem.sabedoria, pontosRestantes)
+                personagem.sabedoria = sabedoria
+                pontosRestantes = pontosAposSabedoria
+
+                val (carisma, pontosAposCarisma) = distribuirPontos(personagem, "Carisma", personagem.carisma, pontosRestantes)
+                personagem.carisma = carisma
+                pontosRestantes = pontosAposCarisma
+
+                // Verificação para garantir que os pontos sejam exatamente zero no final
+                if (pontosRestantes != 0) {
+                    println("Erro: Você deve usar exatamente 27 pontos. Por favor, ajuste os valores dos atributos.")
+                    repetirDistribuicao = true
+                }
+            }
 
             personagem.calcularPontosDeVida()
 
@@ -114,7 +140,7 @@ fun main() {
             // Exibir o personagem final
             println("Personagem criado:")
             println("Nome: ${personagem.nome}")
-            println("Raça: ${personagem.raca?.nome}")
+            println("Raça: ${personagem.raca?.nome} ${personagem.raca?.subRaca?.let { "($it)" } ?: ""}")
             println("Classe: ${personagem.classe?.nome}")
             println("Força: ${personagem.forca}")
             println("Destreza: ${personagem.destreza}")

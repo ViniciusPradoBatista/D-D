@@ -4,6 +4,7 @@ import java.util.Scanner
 
 class Raca(
     val nome: String,
+    val subRaca: String? = null,
     val bonusAtributos: Map<String, Int>
 ) {
     fun aplicarBonus(personagem: Personagem) {
