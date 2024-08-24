@@ -64,36 +64,31 @@ fun main() {
     }
 
     while (true) {
-        // Escolha da raça
+
         println("Escolha sua raça:")
         racas.forEachIndexed { index, raca -> println("${index + 1} - ${raca.nome} ${raca.subRaca?.let { "($it)" } ?: ""}") }
         val racaEscolha = scanner.nextInt()
         val racaSelecionada = racas[racaEscolha - 1]
 
-        // Escolha da classe
         println("Escolha a classe da sua raça:")
         classes.forEachIndexed { index, classe -> println("${index + 1} - ${classe.nome}") }
         val classeEscolha = scanner.nextInt()
         val classeSelecionada = classes[classeEscolha - 1]
 
-        // Criar personagem com a raça e classe selecionadas
         val personagem = Personagem()
         personagem.raca = racaSelecionada
         personagem.classe = classeSelecionada
         personagem.aplicarBonusRaca()
         personagem.aplicarBonusClasse()
 
-        // Exibir atributos iniciais
         personagem.exibirAtributos()
 
-        // Perguntar se deseja manter ou alterar
         println("Deseja manter ou alterar seu personagem?")
         println("1 - Manter")
         println("2 - Alterar")
         val escolhaFinal = scanner.nextInt()
 
         if (escolhaFinal == 1) {
-            // Distribuição de pontos de habilidade
             var pontosRestantes = 27
             var repetirDistribuicao = true
 
@@ -124,7 +119,6 @@ fun main() {
                 personagem.carisma = carisma
                 pontosRestantes = pontosAposCarisma
 
-                // Verificação para garantir que os pontos sejam exatamente zero no final
                 if (pontosRestantes != 0) {
                     println("Erro: Você deve usar exatamente 27 pontos. Por favor, ajuste os valores dos atributos.")
                     repetirDistribuicao = true
@@ -133,11 +127,9 @@ fun main() {
 
             personagem.calcularPontosDeVida()
 
-            // Pedir nome do personagem
             println("Dê um nome ao seu personagem:")
             personagem.nome = scanner.next()
 
-            // Exibir o personagem final
             println("Personagem criado:")
             println("Nome: ${personagem.nome}")
             println("Raça: ${personagem.raca?.nome} ${personagem.raca?.subRaca?.let { "($it)" } ?: ""}")
@@ -152,7 +144,6 @@ fun main() {
             println("Pontos restantes: $pontosRestantes")
             break
         } else {
-            // Reiniciar loop para alterar as escolhas
             println("Vamos começar novamente!")
         }
     }

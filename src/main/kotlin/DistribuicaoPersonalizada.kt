@@ -52,7 +52,7 @@ class DistribuicaoPersonalizada {
                 if (escolha == 1) {
                     break
                 } else {
-                    // Resetando os valores
+
                     pontosRestantes += pontosAdicionados
                     novoValor = valorInicial
                     println("Os pontos de $nomeAtributo foram resetados para $valorInicial.")
