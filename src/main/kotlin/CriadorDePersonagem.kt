@@ -6,7 +6,7 @@ class CriadorDePersonagem(
     fun criarPersonagem(raca: Raca): Personagem {
         val personagem = Personagem()
         distribuicaoStrategy.distribuir(personagem, 27)
-        raca.aplicarBonus(personagem)  // Chama o método aplicarBonus
+        raca.aplicarBonus(personagem)
         personagem.calcularPontosDeVida()
         return personagem
     }
